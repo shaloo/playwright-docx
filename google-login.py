@@ -4,6 +4,7 @@ import os
 # Retrieve email and password from environment variables
 google_email = os.getenv('GOOGLE_EMAIL')
 google_password = os.getenv('GOOGLE_PASSWORD')
+dashboard_url = os.getenv('DASHBOARD_URL',"https://dashboard.arcana.network")
 
 if not google_email or not google_password:
     raise EnvironmentError("Environment variables GOOGLE_EMAIL and GOOGLE_PASSWORD must be set")
@@ -46,9 +47,11 @@ with sync_playwright() as p:
     page = context.new_page()
 
     # Navigate to the website's login page
-    page.goto('https://dashboard.arcana.network')
-    
-    page.wait_for_timeout(2000);
+    page.goto(dashboard_url)
+   
+    page.screenshot(path="landing_page.png")
+ 
+    page.wait_for_timeout(3000);
 
     # Click on the "Sign in with Google" button
     page.click('button:has-text("Google")')
@@ -86,6 +89,7 @@ with sync_playwright() as p:
 
         page.screenshot(path='full_page.png', full_page=True)
         card_locator = page.locator("section.card:has(h3:text-is('Create New App'))")
+        card_locator.hover()
         card_locator.screenshot(path="create_new_card.png")
 
         # Optionally handle 2FA if enabled
